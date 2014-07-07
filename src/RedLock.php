@@ -18,7 +18,8 @@ class RedLock
         $this->retryDelay = $retryDelay;
         $this->retryCount = $retryCount;
 
-        $this->quorum  = count($servers) / 2 + 1;
+        $this->quorum  = min(count($servers), (count($servers) / 2 + 1));
+
     }
 
     public function lock($resource, $ttl)
