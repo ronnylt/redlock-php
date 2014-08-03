@@ -11,7 +11,7 @@ class RedLock
     private $servers = array();
     private $instances = array();
 
-    function __construct(array $servers, $retryDelay = 200, $retryCount = 3)
+    public function __construct(array $servers, $retryDelay = 200, $retryCount = 3)
     {
         $this->servers = $servers;
 
@@ -110,7 +110,6 @@ class RedLock
                 return 0
             end
          ';
-
 
         return $instance->eval($script, [$resource, $token], 1);
     }
