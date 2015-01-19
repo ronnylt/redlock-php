@@ -87,10 +87,17 @@ class RedLock
     {
         if (empty($this->instances)) {
             foreach ($this->servers as $server) {
-                list($host, $port, $timeout) = $server;
-                $redis = new \Redis();
-                $redis->connect($host, $port, $timeout);
-
+                if ($server instanceof \Redis) {
+                    if ($server->isConnected()) {
+                        $redis = $server;
+                    } else {
+                        throw new \Exception("If you use \\Redis objects as argument, the \\Redis object must be connected.");
+                    }
+                } else {
+                    list($host, $port, $timeout) = $server;
+                    $redis = new \Redis();
+                    $redis->connect($host, $port, $timeout);
+                }
                 $this->instances[] = $redis;
             }
         }

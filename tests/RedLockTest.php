@@ -20,7 +20,7 @@ class RedLockTest extends PHPUnit_Framework_TestCase
     {
         $redlock = new RedLock($this->servers);
         
-        $resource = "my_test_resource";
+        $resource = "my_test_resource".time();
 
         $lockA = $redlock->lock($resource, 500);
         $this->assertInternalType("array", $lockA);
@@ -65,6 +65,30 @@ class RedLockTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($lockC);
 
         $redlock->unlock($lockC);
+    }
 
+    public function testRedisObjectConstruct ()
+    {
+        $resource = "my_test_resource".time();
+
+        $redisObjects = [];
+        foreach ($this->servers as $server) {
+            list($host, $port, $timeout) = $server;
+            $redis = new \Redis();
+            if (!$redis->connect($host, $port, $timeout)) {
+                throw new \Exception("Redis didn't connect");
+            }
+            $redisObjects[] = $redis;
+        }
+
+        $redlock = new RedLock($redisObjects);
+
+        $lockA = $redlock->lock($resource, 500);
+        $this->assertInternalType("array", $lockA);
+        $this->assertArrayHasKey("validity", $lockA);
+        $this->assertArrayHasKey("token", $lockA);
+        $this->assertArrayHasKey("resource", $lockA);
+        $this->assertEquals($resource, $lockA["resource"]);
+        $redlock->unlock($lockA);
     }
 }
