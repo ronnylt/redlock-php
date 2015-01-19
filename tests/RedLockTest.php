@@ -48,7 +48,7 @@ class RedLockTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($resource, $lockB["resource"]);
 
         // release lock B
-        $redlock->unlock($lockB);
+        $this->assertTrue($redlock->unlock($lockB));
 
         // try to lock same resource as we just released
         // this should obviously work 
@@ -63,8 +63,7 @@ class RedLockTest extends PHPUnit_Framework_TestCase
         // and expect it to fail
         $lockC = $redlock->lock($resource, 500);
         $this->assertFalse($lockC);
-
-        $redlock->unlock($lockC);
+        $this->assertFalse($redlock->unlock($lockC));
     }
 
     public function testRedisObjectConstruct ()
@@ -89,6 +88,32 @@ class RedLockTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey("token", $lockA);
         $this->assertArrayHasKey("resource", $lockA);
         $this->assertEquals($resource, $lockA["resource"]);
-        $redlock->unlock($lockA);
+        $this->assertTrue($redlock->unlock($lockA));
+    }
+
+    public function testLockMultiple ()
+    {
+        $redlock = new RedLock($this->servers);
+        $resource = "my_test_resource".time();
+
+        $lockA = $redlock->lock($resource, 1000);
+        $lockB = $redlock->lock($resource, 1000);
+        $lockC = $redlock->lock($resource, 1000);
+
+        $this->assertInternalType("array", $lockA);
+        $this->assertFalse($lockB);
+        $this->assertFalse($lockC);
+
+        $this->assertTrue($redlock->unlock($lockA));
+
+        $lockA = $redlock->lock($resource, 1000);
+        $lockB = $redlock->lock($resource, 1000);
+
+        $this->assertInternalType("array", $lockA);
+        $this->assertFalse($lockB);
+
+        $this->assertTrue($redlock->unlock($lockA));
+
+
     }
 }

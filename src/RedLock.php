@@ -78,9 +78,16 @@ class RedLock
         $resource = $lock['resource'];
         $token    = $lock['token'];
 
+        $success = 0;
+        $fail = 0;
         foreach ($this->instances as $instance) {
-            $this->unlockInstance($instance, $resource, $token);
+            if ($this->unlockInstance($instance, $resource, $token)) {
+                $success += 1;
+            } else {
+                $fail += 1;
+            }
         }
+        return $fail == 0;
     }
 
     private function initInstances()
