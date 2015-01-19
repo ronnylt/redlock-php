@@ -5,18 +5,22 @@
         {
             "name": "Ronny Lopez",
             "email": "ronny@tangotree.io"
+        },
+        {
+            "name": "Henrik Tudborg",
+            "email": "henrik@tudb.org"
         }
     ],
     "require": {
         "php": "~5.4",
         "ext-redis": "~2.2.5"
     },
-
+    "require-dev": {
+        "phpunit/phpunit": "4.4.*"
+    },
     "autoload": {
         "psr-4": {
             "RedLock\\": "src/"
         }
     }
-
-
 }
