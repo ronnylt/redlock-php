@@ -124,9 +124,14 @@ class RedLock
             else
                 return 0
             end
-         ';
+        ';
 
+        // If the redis object is using igbinary as serializer
+        // we need to call serialize to make sure we the
+        // value is serialized the same way in our above Lua
+        // as when we called ->set()
+        $serializedToken = $instance->_serialize($token);
 
-        return $instance->eval($script, [$resource, $token], 1);
+        return $instance->eval($script, [$resource, $serializedToken], 1);
     }
 }
