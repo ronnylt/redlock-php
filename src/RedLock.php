@@ -26,7 +26,7 @@ class RedLock
     {
         $this->initInstances();
 
-        $token = uniqid();
+        $token = $this->generateToken();
         $retry = $this->retryCount;
 
         do {
@@ -80,6 +80,10 @@ class RedLock
         foreach ($this->instances as $instance) {
             $this->unlockInstance($instance, $resource, $token);
         }
+    }
+
+    protected function generateToken() {
+        return uniqid();
     }
 
     private function initInstances()
