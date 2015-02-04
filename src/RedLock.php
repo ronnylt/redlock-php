@@ -18,7 +18,7 @@ class RedLock
         $this->retryDelay = $retryDelay;
         $this->retryCount = $retryCount;
 
-        $this->quorum  = min(count($servers), (count($servers) / 2 + 1));
+        $this->quorum  = $this->getQuorum(count($servers));
 
     }
 
@@ -113,5 +113,12 @@ class RedLock
 
 
         return $instance->eval($script, [$resource, $token], 1);
+    }
+
+    private function getQuorum($serverCount) {
+        if ($serverCount == 2)
+            return 1;
+
+        return floor($serverCount/2+1);
     }
 }
