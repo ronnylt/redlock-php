@@ -11,7 +11,7 @@ To create a lock manager:
 $servers = [
     ['127.0.0.1', 6379, 0.01],
     ['127.0.0.1', 6389, 0.01],
-    ['127.0.0.1', 6399, 0.01],
+    $someRedisInstance, // you may pass an already connected \Redis instance
 ];
 
 $redLock = new RedLock($servers);
