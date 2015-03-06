@@ -19,7 +19,6 @@ class RedLock
         $this->retryCount = $retryCount;
 
         $this->quorum  = min(count($servers), (count($servers) / 2 + 1));
-
     }
 
     public function lock($resource, $ttl)
@@ -71,7 +70,7 @@ class RedLock
         return false;
     }
 
-    public function unlock($lock)
+    public function unlock(array $lock)
     {
         $this->initInstances();
         $resource = $lock['resource'];
@@ -98,7 +97,6 @@ class RedLock
     private function lockInstance($instance, $resource, $token, $ttl)
     {
         return $instance->set($resource, $token, ['NX', 'PX' => $ttl]);
-
     }
 
     private function unlockInstance($instance, $resource, $token)
@@ -109,9 +107,7 @@ class RedLock
             else
                 return 0
             end
-         ';
-
-
+        ';
         return $instance->eval($script, [$resource, $token], 1);
     }
 }
