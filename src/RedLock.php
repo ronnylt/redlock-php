@@ -8,9 +8,14 @@ class RedLock
 
     private $quorum;
 
-    private $servers = array();
-    private $instances = array();
+    private $servers = [];
+    private $instances = [];
 
+    /**
+     * @param array|Redis[] $servers
+     * @param int           $retryDelay
+     * @param int           $retryCount
+     */
     function __construct(array $servers, $retryDelay = 200, $retryCount = 3)
     {
         $this->servers = $servers;
@@ -21,11 +26,17 @@ class RedLock
         $this->quorum  = min(count($servers), (count($servers) / 2 + 1));
     }
 
+    /**
+     * @param string $resource
+     * @param int $ttl — in milliseconds
+     *
+     * @return array|bool
+     */
     public function lock($resource, $ttl)
     {
         $this->initInstances();
 
-        $token = uniqid();
+        $token = uniqid("", true);
         $retry = $this->retryCount;
 
         do {
@@ -85,20 +96,39 @@ class RedLock
     {
         if (empty($this->instances)) {
             foreach ($this->servers as $server) {
-                list($host, $port, $timeout) = $server;
-                $redis = new \Redis();
-                $redis->connect($host, $port, $timeout);
+                if ($server instanceof \Redis) {
+                    $redis = $server;
+                } else {
+                    list($host, $port, $timeout) = $server;
+                    $redis = new \Redis();
+                    $redis->connect($host, $port, $timeout);
+                }
 
                 $this->instances[] = $redis;
             }
         }
     }
 
+    /**
+     * @param Redis $instance
+     * @param string $resource
+     * @param string $token
+     * @param int $ttl
+     *
+     * @return mixed
+     */
     private function lockInstance($instance, $resource, $token, $ttl)
     {
         return $instance->set($resource, $token, ['NX', 'PX' => $ttl]);
     }
 
+    /**
+     * @param Redis $instance
+     * @param string $resource
+     * @param string $token
+     *
+     * @return mixed
+     */
     private function unlockInstance($instance, $resource, $token)
     {
         $script = '

@@ -5,6 +5,11 @@
         {
             "name": "Ronny Lopez",
             "email": "ronny@tangotree.io"
+        },
+        {
+            "name": "Maciej Łebkowski",
+            "email": "m.lebkowski@gmail.com",
+            "role": "contributor"
         }
     ],
     "require": {
