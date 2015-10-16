@@ -59,11 +59,13 @@ class RedLock
                 }
             }
 
-            // Wait a random delay before to retry
-            $delay = mt_rand(floor($this->retryDelay / 2), $this->retryDelay);
-            usleep($delay * 1000);
-
             $retry--;
+
+            if ($retry > 0) {
+                // Wait a random delay before to retry
+                $delay = mt_rand(floor($this->retryDelay / 2), $this->retryDelay);
+                usleep($delay * 1000);
+            }
 
         } while ($retry > 0);
 
