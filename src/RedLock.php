@@ -31,7 +31,7 @@ class RedLock
     private $quorum;
 
     /**
-     * @var array[] Array of server information arrays: [host, port, timeout]
+     * @var array[]|\Redis[] Array of server information arrays: [host, port, timeout]
      * @see \Redis::connect()
      */
     private $servers = array();
@@ -44,13 +44,13 @@ class RedLock
     /**
      * RedLock constructor.
      *
-     * @param array[] $servers    Each element should an array of host, port, timeout
-     * @param int     $retryDelay Seconds delay between retries
-     * @param int     $retryCount Number of times to retry
+     * @param array[]|\Redis[] $servers    Each element should an array of host, port, timeout
+     * @param int              $retryDelay Seconds delay between retries
+     * @param int              $retryCount Number of times to retry
      *
      * @see \Redis::connect()
      */
-    function __construct(array $servers, $retryDelay = 200, $retryCount = 3)
+    public function __construct(array $servers, $retryDelay = 200, $retryCount = 3)
     {
         $this->servers = $servers;
 
@@ -62,7 +62,7 @@ class RedLock
 
     /**
      * @param string $resource Unique identifier
-     * @param int    $ttl      Time to live
+     * @param int    $ttl      Time to live (milliseconds)
      *
      * @return array|bool
      */
@@ -137,11 +137,13 @@ class RedLock
     {
         if (empty($this->instances)) {
             foreach ($this->servers as $server) {
-                list($host, $port, $timeout) = $server;
-                $redis = new \Redis();
-                $redis->connect($host, $port, $timeout);
+                if (!$server instanceof \Redis) {
+                    list($host, $port, $timeout) = $server;
+                    $server = new \Redis();
+                    $server->connect($host, $port, $timeout);
+                }
 
-                $this->instances[] = $redis;
+                $this->instances[] = $server;
             }
         }
     }
@@ -150,7 +152,7 @@ class RedLock
      * @param \Redis $instance Redis instance to attempt to lock
      * @param string $resource Unique identifier
      * @param string $token    Unique token
-     * @param int    $ttl      Time to live
+     * @param int    $ttl      Time to live (milliseconds)
      *
      * @return mixed
      */

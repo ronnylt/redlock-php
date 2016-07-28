@@ -1,22 +1,30 @@
 {
-    "name": "ronnylt/redlock-php",
-    "description": "Redis distributed locks in PHP",
-    "authors": [
-        {
-            "name": "Ronny Lopez",
-            "email": "ronny@tangotree.io"
-        }
-    ],
-    "require": {
-        "php": "~5.4",
-        "ext-redis": "~2.2.5"
+  "name": "ronnylt/redlock-php",
+  "description": "Redis distributed locks in PHP",
+  "authors": [
+    {
+      "name": "Ronny Lopez",
+      "email": "ronny@tangotree.io"
     },
-
-    "autoload": {
-        "psr-4": {
-            "RedLock\\": "src/"
-        }
+    {
+      "name": "Peter Scopes",
+      "email": "peter.scopes@gmail.com"
     }
-
-
+  ],
+  "require": {
+    "php": "~5.4",
+    "ext-redis": "~2.2.5"
+  },
+  "require-dev": {
+    "php": "~5.6",
+    "phpunit/phpunit": "5.4.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "RedLock\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": { "": "tests/" }
+  }
 }
