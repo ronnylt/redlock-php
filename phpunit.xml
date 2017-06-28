@@ -8,7 +8,6 @@
          stopOnIncomplete="false"
          stopOnSkipped="false"
          beStrictAboutTestsThatDoNotTestAnything="true"
-         checkForUnintentionallyCoveredCode="true"
          verbose="true"
          bootstrap="./vendor/autoload.php">
     <testsuites>
