@@ -17,5 +17,11 @@
         "psr-4": {
             "RedLock\\": "src/"
         }
-    }
+    },
+    "funding": [
+        {
+            "type": "patreon",
+            "url": "https://www.patreon.com/ronnylt"
+        }
+    ]
 }
