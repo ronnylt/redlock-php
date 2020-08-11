@@ -1,6 +1,7 @@
 {
     "name": "ronnylt/redlock-php",
     "description": "Redis distributed locks in PHP",
+    "license": "MIT",
     "authors": [
         {
             "name": "Ronny Lopez",
@@ -17,6 +18,4 @@
             "RedLock\\": "src/"
         }
     }
-
-
 }

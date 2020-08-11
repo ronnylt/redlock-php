@@ -1,4 +1,4 @@
-redlock-php - Redis distributed locks in PHP
+# RedLock – Redis distributed locks in PHP
 
 Based on [Redlock-rb](https://github.com/antirez/redlock-rb) by [Salvatore Sanfilippo](https://github.com/antirez)
 
