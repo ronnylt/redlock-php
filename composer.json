@@ -22,6 +22,10 @@
         {
             "type": "patreon",
             "url": "https://www.patreon.com/ronnylt"
+        },
+        {
+            "url": "https://opencollective.com/redlock-php",
+            "type": "open_collective"
         }
     ]
 }
