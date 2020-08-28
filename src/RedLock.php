@@ -2,8 +2,6 @@
 
 class RedLock
 {
-    private $retryDelay;
-    private $retryCount;
     private $clockDriftFactor = 0.01;
 
     private $quorum;
@@ -11,24 +9,19 @@ class RedLock
     private $servers = array();
     private $instances = array();
 
-    function __construct(array $servers, $retryDelay = 200, $retryCount = 3)
+    function __construct(array $servers)
     {
         $this->servers = $servers;
-
-        $this->retryDelay = $retryDelay;
-        $this->retryCount = $retryCount;
-
         $this->quorum  = min(count($servers), (count($servers) / 2 + 1));
     }
 
-    public function lock($resource, $ttl)
+    public function lock($resource, $ttl, $retryDelay = 200, $try_times = 3)
     {
         $this->initInstances();
 
         $token = uniqid();
-        $retry = $this->retryCount;
 
-        do {
+        while (true) {
             $n = 0;
 
             $startTime = microtime(true) * 1000;
@@ -59,13 +52,15 @@ class RedLock
                 }
             }
 
+            $try_times--;
+
+            if ($try_times === 0)
+                break;
+
             // Wait a random delay before to retry
-            $delay = mt_rand(floor($this->retryDelay / 2), $this->retryDelay);
+            $delay = mt_rand(floor($retryDelay / 2), $retryDelay);
             usleep($delay * 1000);
-
-            $retry--;
-
-        } while ($retry > 0);
+        }
 
         return false;
     }
