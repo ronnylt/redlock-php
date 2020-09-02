@@ -94,12 +94,12 @@ class RedLock
         }
     }
 
-    private function lockInstance($instance, $resource, $token, $ttl)
+    private function lockInstance(Redis $instance, $resource, $token, $ttl)
     {
         return $instance->set($resource, $token, ['NX', 'PX' => $ttl]);
     }
 
-    private function unlockInstance($instance, $resource, $token)
+    private function unlockInstance(Redis $instance, $resource, $token)
     {
         $script = '
             if redis.call("GET", KEYS[1]) == ARGV[1] then
