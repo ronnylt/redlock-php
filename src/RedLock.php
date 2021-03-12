@@ -1,4 +1,5 @@
 <?php
+namespace RedLock;
 
 class RedLock
 {
